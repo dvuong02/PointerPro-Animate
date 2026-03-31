@@ -77,6 +77,7 @@ struct sprite* animate_create_sprite(const char* file) {
     // validate pixels memory allocation
     if(!new_sprite->pixels){
         free(new_sprite); // if error allocating pixel buffer, free sprite
+        fclose(bitmap_file); // close file 
         return NULL;
     }
 
@@ -86,11 +87,20 @@ struct sprite* animate_create_sprite(const char* file) {
     // convert each row of data from BGRA to ARGB (read backwards)
     // create buffer to store temporary row data to flip
     int row_bytes = new_sprite->width * 4; 
-    uint8_t temp_row[row_bytes]; // temporary row buffer of size (width of sprite * bytes per pixel (color_T))
+    uint8_t* temp_row = malloc(row_bytes); // temporary row buffer of size (width of sprite * bytes per pixel (color_T))
+    // validate temp_row memory allocation
+    if (!temp_row) {
+        free(new_sprite->pixels); 
+        free(new_sprite);
+        fclose(bitmap_file);
+        return NULL;
+    }
+
 
     // loop through rows starting at the top of the data, corresponding to BOTTOM row of sprite image
     for(int row = bmpv5_header.bV5Height - 1; row >= 0; row--){
         // read one row from bitmap_file, store in temp_row
+        // assume correct bitmap format provided
         fread(temp_row, row_bytes, 1, bitmap_file);
         
         // read each entry (column) of the row
@@ -107,6 +117,7 @@ struct sprite* animate_create_sprite(const char* file) {
             new_sprite->pixels[row * bmpv5_header.bV5Width + col] = pixel;
         }
     }
+    free(temp_row);
 
     // close file
     fclose(bitmap_file);
