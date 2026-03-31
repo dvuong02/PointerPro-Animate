@@ -28,7 +28,7 @@ doc: $(API_DOC)
 # Generates a doxygen configuration file
 Doxyfile:
 	doxygen -g
-	# Adjust params
+    # Adjust params
 	sed -i 's/\(GENERATE_HTML *= *\).*/\1NO/g' $@
 	sed -i 's/\(EXTRACT_ALL *= *\).*/\1YES/g' $@
 	sed -i 's/\(INPUT *= *\).*/\1"animate.h"/g' $@
@@ -39,9 +39,9 @@ $(API_DOC): DOC_MAKEFILE=latex/Makefile
 $(API_DOC): DOC_TOP=latex/refman.tex
 $(API_DOC): Doxyfile | animate.h
 	doxygen $^
-	# Don't index
+    # Don't index
 	sed -i 's/\t$$(MKIDX/\t#/g'             $(DOC_MAKEFILE)
-	# Remove some dead chapters and ToC
+    # Remove some dead chapters and ToC
 	sed -i 's/^ *\\clearemptydoublepage//g' $(DOC_TOP)
 	sed -i 's/^ *\\tableofcontents//g'      $(DOC_TOP)
 	sed -i 's/^ *\\chapter{File Index}//g'  $(DOC_TOP)
