@@ -192,10 +192,9 @@ bool animate_destroy_sprite(struct sprite* sprite) {
     // validate that sprite exists
     if(!sprite) return false;
 
-    // remove last reference to sprite before deletion
-    sprite->reference_count--;
-    // if no more references exist, free pixel buffer and sprite
-    if(sprite->reference_count == 0){
+    // if only 1 reference to the sprite exists (from its creation), decrement and free sprite pixel buffer and sprite
+    if(sprite->reference_count == 1){
+        sprite->reference_count--; // not technically necessary, but follows proper referencing
         free(sprite->pixels); 
         free(sprite);
     }

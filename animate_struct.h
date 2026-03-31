@@ -10,7 +10,7 @@ struct sprite {
     size_t width; // width of sprite
     size_t height; // height of sprite
     color_t* pixels; // pixel buffer of sprite
-    size_t placement_count; // count of sprite's placements
+    size_t reference_count; // count of all references to sprite
 };
 
 struct sprite_placement {
@@ -31,7 +31,7 @@ struct sprite_placement {
 struct canvas {
     size_t width; // width of canvas
     size_t height; // height of canvas
-    color_t background; // background colour of canvas
+    color_t background_color; // background colour of canvas
     struct sprite_placement* head; // pointer to head node of sprite placements
     struct sprite_placement* tail; // pointer to tail node of sprite placements
 };
