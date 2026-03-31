@@ -1,16 +1,26 @@
 # You may modify this file as you wish, but `make animate.o` should always
 # compile all necessary code into a single object file.
 
+# builds animate.o and test_simple when makefile is run without arguments
 default: animate.o test_simple
 
-test_simple: main_simple.c animate.o | animate.h
+# file variables to simplify code
+source = animate.c canvas.c frame.c sprite.c sprite_placement.c
+header = animate.h animate_struct.h
+
+# builds test program: dependencies | headers
+test_simple: main_simple.c animate.o | $(header)
+    # $^ short form for all dependencies, $@ short form for target name
+    # gcc main_simple.c animate.o -o test_simple
 	gcc $^ -o $@
 
-animate.o: animate.c | animate.h
-	gcc -fPIC -c $^ -o $@
-
-
-
+# builds animate object file. "|" means 'Do not recompile dependencies if headers
+# change', but we remove it because we must recompile source files if header changes
+animate.o: $(source) $(header)
+    # 'if any file in $(source) or $(header) changes, animate.o is out of date
+    # to rebuild animate.o, run the command below:
+    # gcc -fPIC -c animate.c -o animate.o
+	gcc -fPIC -c animate.c -o $@
 
 API_DOC=PointerProAnimateRefman.pdf
 doc: $(API_DOC)
