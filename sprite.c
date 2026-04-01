@@ -183,7 +183,7 @@ struct sprite* animate_create_circle(size_t radius, color_t c, bool filled) {
     }
 
     // assign basic properties
-    size_t diameter = radius * 2;
+    size_t diameter = radius * 2 + 1; // +1 for the centre pixel of circle
     new_sprite->width = diameter;
     new_sprite->height = diameter;
     new_sprite->reference_count = 1;
