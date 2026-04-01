@@ -167,6 +167,20 @@ struct sprite* animate_create_circle(size_t radius, color_t c, bool filled) {
     struct sprite* new_sprite = malloc(sizeof(struct sprite));
     // validate new_sprite memory allocation
     if(!new_sprite) return NULL;
+    // for special case of 0 radius
+    if(radius==0){
+        new_sprite->width = 1;
+        new_sprite->height = 1;
+        new_sprite->pixels = malloc(sizeof(color_t));
+        // validate memory allocation
+        if(!new_sprite->pixels){
+            free(new_sprite);
+            return NULL;
+        }
+        new_sprite->pixels[0] = c;
+        new_sprite->reference_count = 1;
+        return new_sprite;
+    }
 
     // assign basic properties
     size_t diameter = radius * 2;
@@ -186,7 +200,9 @@ struct sprite* animate_create_circle(size_t radius, color_t c, bool filled) {
     for(size_t y = 0; y < diameter; y++){
         for(size_t x = 0; x < diameter; x++){
             // calculate distance from circle centre using circle equation
-            size_t circle_eqn = (x-radius)*(x-radius) + (y-radius)*(y-radius);
+            ssize_t dx = (ssize_t)x - (ssize_t)radius; // distance x
+            ssize_t dy = (ssize_t)y - (ssize_t)radius; // distance y
+            size_t circle_eqn = (size_t)(dx*dx + dy*dy);
             // for any points inside the circle, colour c
             if(circle_eqn <= radius*radius){
                 new_sprite->pixels[y*diameter + x] = c;
@@ -206,10 +222,11 @@ bool animate_destroy_sprite(struct sprite* sprite) {
 
     // if only 1 reference to the sprite exists (from its creation), decrement and free sprite pixel buffer and sprite
     if(sprite->reference_count == 1){
-        sprite->reference_count--; // not technically necessary, but follows proper referencing
+        sprite->reference_count--; // not technically necessary but follows referencing convention
         free(sprite->pixels); 
         free(sprite);
+        return 0;
     }
     // successful operation returns true (even if sprite isnt freed)
-    return true;
+    return 1;
 }
