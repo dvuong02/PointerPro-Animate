@@ -112,6 +112,8 @@ void animate_placement_bottom(struct sprite_placement* sprite_placement) {
 }
 
 void animate_destroy_placement(struct sprite_placement* sprite_placement) {
+    // check if placement and canvas are valid
+    if (!sprite_placement || !sprite_placement->canvas) return;
     // case 1: node has prev and next (middle of list)
     if(sprite_placement->next != NULL && sprite_placement->prev != NULL){
         sprite_placement->prev->next = sprite_placement->next;

@@ -86,7 +86,7 @@ struct sprite* animate_create_sprite(const char* file) {
 
     // convert each row of data from BGRA to ARGB (read backwards)
     // create buffer to store temporary row data to flip
-    int row_bytes = new_sprite->width * 4; 
+    size_t row_bytes = new_sprite->width * 4; 
     uint8_t* temp_row = malloc(row_bytes); // temporary row buffer of size (width of sprite * bytes per pixel (color_T))
     // validate temp_row memory allocation
     if (!temp_row) {
@@ -98,13 +98,14 @@ struct sprite* animate_create_sprite(const char* file) {
 
 
     // loop through rows starting at the top of the data, corresponding to BOTTOM row of sprite image
-    for(int row = bmpv5_header.bV5Height - 1; row >= 0; row--){
+    // used signed int ssize_t for row since going below 0 on unsigned causes wrap-around
+    for(ssize_t row = (ssize_t)bmpv5_header.bV5Height - 1; row >= 0; row--){
         // read one row from bitmap_file, store in temp_row
         // assume correct bitmap format provided
         fread(temp_row, row_bytes, 1, bitmap_file);
         
         // read each entry (column) of the row
-        for(int col = 0; col < bmpv5_header.bV5Width; col++){
+        for(size_t col = 0; col < bmpv5_header.bV5Width; col++){
             uint8_t B = temp_row[col*4 + 0]; // read first 8 bits of current entry
             uint8_t G = temp_row[col*4 + 1]; // read next 8 bits of current entry
             uint8_t R = temp_row[col*4 + 2]; // read next 8 bits of current entry
@@ -144,8 +145,8 @@ struct sprite* animate_create_rectangle(size_t width, size_t height, color_t c, 
     }
 
     // fill each pixel according to bool filled
-    for(int y = 0; y < height; y++){
-        for(int x = 0; x < width; x++){
+    for(size_t y = 0; y < height; y++){
+        for(size_t x = 0; x < width; x++){
             if(filled){ // if rectangle is filled...
                 new_sprite->pixels[y*width + x] = c;
             } else if (!filled) { // if rectangle is not filled (only fill borders)
@@ -182,10 +183,10 @@ struct sprite* animate_create_circle(size_t radius, color_t c, bool filled) {
     }
 
     // fill pixels using circle equation
-    for(int y = 0; y < diameter; y++){
-        for(int x = 0; x < diameter; x++){
+    for(size_t y = 0; y < diameter; y++){
+        for(size_t x = 0; x < diameter; x++){
             // calculate distance from circle centre using circle equation
-            int circle_eqn = (x-radius)*(x-radius) + (y-radius)*(y-radius);
+            size_t circle_eqn = (x-radius)*(x-radius) + (y-radius)*(y-radius);
             // for any points inside the circle, colour c
             if(circle_eqn <= radius*radius){
                 new_sprite->pixels[y*diameter + x] = c;

@@ -12,7 +12,7 @@ header = animate.h animate_struct.h
 test_simple: main_simple.c animate.o | $(header)
     # $^ short form for all dependencies, $@ short form for target name
     # gcc main_simple.c animate.o -o test_simple
-	gcc $^ -o $@
+	gcc $^ -o $@ -lm
 
 # builds animate object file. "|" means 'Do not recompile dependencies if headers
 # change', but we remove it because we must recompile source files if header changes

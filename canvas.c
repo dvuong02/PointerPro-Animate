@@ -4,7 +4,8 @@
 struct canvas* animate_create_canvas(size_t height, size_t width, color_t background_color) {
     // allocate memory for new canvas
     struct canvas* new_canvas = malloc(sizeof(struct canvas));
-    
+    // validate new canvas memory allocation
+    if(!new_canvas) return NULL;
     // assign basic properties
     new_canvas->height = height;
     new_canvas->width = width;
