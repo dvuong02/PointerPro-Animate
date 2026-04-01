@@ -9,7 +9,7 @@ struct canvas* animate_create_canvas(size_t height, size_t width, color_t backgr
     // assign basic properties
     new_canvas->height = height;
     new_canvas->width = width;
-    new_canvas->background_color = background_color;
+    new_canvas->background_color = background_color | 0xFF000000; // force alpha of background to 255
     new_canvas->head = NULL; // initialise head of doubly-linked list of positions
     new_canvas->tail = NULL; // initialise tail of doubly-linked list of positions
     
